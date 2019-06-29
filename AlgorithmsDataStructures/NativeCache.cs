@@ -16,7 +16,7 @@ namespace AlgorithmsDataStructures
             size = sz;
             slots = new string[size];
             values = new T[size];
-            hits = new int[sz];
+            hits = new int[size];
         }
 
         public int HashFun(string key)

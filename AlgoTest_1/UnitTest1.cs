@@ -197,5 +197,133 @@ namespace AlgoTest_1
             Assert.AreEqual(0, cache.Get("2"));
             Assert.AreEqual(2, cache.Get("3a"));
         }
+
+
+        [TestMethod]
+        public void TestPutGetCount_7()
+        {
+            NativeCache<int> cache = new NativeCache<int>(4);
+            
+            cache.Put("3", 2);
+
+            for (int i = 0; i < 4; i++)
+                if (cache.values[i] != 0)
+                {
+                    Assert.AreEqual(2, cache.values[i]);
+                    Assert.AreEqual("3", cache.slots[i]);
+                }
+        }
+
+
+        [TestMethod]
+        public void TestPutGetCount_8()
+        {
+            NativeCache<int> cache = new NativeCache<int>(4);
+
+            cache.Put("2", 2);
+
+            int[] v = cache.values;
+            string[] s = cache.slots;
+            int[] h = cache.hits;
+            int index = 0;
+
+            for (int i = 0; i < 4; i++)
+                if (cache.values[i] != 0) index = i;
+
+            Assert.AreEqual(2, cache.values[index]);
+            Assert.AreEqual(true, cache.slots[index] != null);
+            Assert.AreEqual(0, cache.hits[index]);
+            Assert.AreEqual(2, cache.Get("2"));
+            Assert.AreEqual(1, cache.hits[index]);
+        }
+
+
+        [TestMethod]
+        public void TestPutGetCount_9()
+        {
+            NativeCache<int> cache = new NativeCache<int>(8);
+
+            cache.Put("6", 3);
+
+            int[] v = cache.values;
+            string[] s = cache.slots;
+            int[] h = cache.hits;
+            int index = 0;
+
+            for (int i = 0; i < 8; i++)
+                if (cache.values[i] != 0) index = i;
+
+            Assert.AreEqual(3, cache.values[index]);
+            Assert.AreEqual(true, cache.slots[index] != null);
+            Assert.AreEqual(0, cache.hits[index]);
+            Assert.AreEqual(3, cache.Get("6"));
+            Assert.AreEqual(1, cache.hits[index]);
+        }
+
+
+        [TestMethod]
+        public void TestPutGetCount_10()
+        {
+            NativeCache<int> cache = new NativeCache<int>(6);
+
+            cache.Put("1", 1);
+            cache.Put("2", 1);
+            cache.Put("3", 1);
+            cache.Put("4", 1);
+            cache.Put("5", 1);
+            cache.Put("6", 1);
+
+
+            // Выполнение запросов 1-6 раз (Значение с ключом "1" - 1 раз, значение с ключом "6" - 6 раз)
+            // Пара значение-ключ "1" = 1 будут иметь меньшее число запросов и подлежит вытеснению.
+            //
+            cache.Get("1");
+            cache.Get("2");
+            cache.Get("2");
+            cache.Get("3");
+            cache.Get("3");
+            cache.Get("3");
+            cache.Get("4");
+            cache.Get("4");
+            cache.Get("4");
+            cache.Get("4");
+            cache.Get("5");
+            cache.Get("5");
+            cache.Get("5");
+            cache.Get("5");
+            cache.Get("5");
+            cache.Get("6");
+            cache.Get("6");
+            cache.Get("6");
+            cache.Get("6");
+            cache.Get("6");
+            cache.Get("6");
+
+
+            // Добаление ключ-значение "11" - 2.
+            // Происходит вытеснение менее востребованной пары "1" - 1.
+            //
+            //
+            cache.Put("11", 2);
+            Assert.AreEqual(0, cache.Get("1"));
+            cache.Get("11");
+            cache.Get("11");
+            cache.Get("11");
+
+
+            cache.Put("12", 2);
+            Assert.AreEqual(0, cache.Get("2"));
+            cache.Get("12");
+            cache.Get("12");
+            cache.Get("12");
+
+
+            Assert.AreEqual(2, cache.Get("11"));
+            Assert.AreEqual(2, cache.Get("12"));
+            Assert.AreEqual(1, cache.Get("3"));
+            Assert.AreEqual(1, cache.Get("4"));
+            Assert.AreEqual(1, cache.Get("5"));
+            Assert.AreEqual(1, cache.Get("6"));
+        }
     }
 }
