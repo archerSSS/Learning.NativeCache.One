@@ -310,7 +310,10 @@ namespace AlgoTest_1
             cache.Get("11");
             cache.Get("11");
 
-
+            // Добаление ключ-значение "12" - 2.
+            // Происходит вытеснение менее востребованной пары "2" - 1.
+            //
+            //
             cache.Put("12", 2);
             Assert.AreEqual(0, cache.Get("2"));
             cache.Get("12");

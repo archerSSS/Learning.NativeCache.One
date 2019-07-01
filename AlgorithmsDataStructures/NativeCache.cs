@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AlgorithmsDataStructures
 {
@@ -34,16 +35,9 @@ namespace AlgorithmsDataStructures
 
         public bool IsKey(string key)
         {
-            if (key != null)
-            {
-                int nx = HashFun(key);
-                for (int i = 0; i < size; i++)
-                {
-                    if (slots[nx] == key) return true;
-                    nx++;
-                    if (nx >= size) nx = 0;
-                }
-            }
+            int nx = FindSlot(key);
+            if (nx != -1)
+                return true;
             return false;
         }
 
@@ -63,15 +57,7 @@ namespace AlgorithmsDataStructures
                     nx++;
                     if (nx >= size) nx = 0;
                 }
-
-                int min = hits[0];
-                int erasedSlot = 0;
-                for (int i = 1; i < size; i++)
-                    if (hits[i] < min)
-                    {
-                        erasedSlot = i;
-                        min = hits[i];
-                    }
+                int erasedSlot = Array.IndexOf(hits, hits.Min());
 
                 hits[erasedSlot] = 0;
                 slots[erasedSlot] = key;
@@ -81,21 +67,29 @@ namespace AlgorithmsDataStructures
 
         public T Get(string key)
         {
+            int nx = FindSlot(key);
+            if (nx != -1)
+            {
+                hits[nx]++;
+                return values[nx];
+            }
+            return default(T);
+        }
+        
+        private int FindSlot(string key)
+        {
             if (key != null)
             {
                 int nx = HashFun(key);
                 for (int i = 0; i < size; i++)
                 {
                     if (slots[nx] == key)
-                    {
-                        hits[nx]++;
-                        return values[nx];
-                    }
+                        return nx;
                     nx++;
                     if (nx >= size) nx = 0;
                 }
             }
-            return default(T);
-        }
+            return -1;
+        } 
     }
 }
